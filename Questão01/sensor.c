@@ -11,7 +11,7 @@ typedef struct {
     float valor;
 } Leitura;
 
-// Funcao para ordenar leituras usando selection sort
+//Ordenação por Timestamp
 void ordenar_por_timestamp(Leitura *leituras, int n) {
     int i, j, min_idx;
     Leitura temp;
@@ -30,7 +30,7 @@ void ordenar_por_timestamp(Leitura *leituras, int n) {
     }
 }
 
-// Funcao para verificar se um sensor ja foi registrado
+// Registro do sensor
 int sensor_existe(char sensores[][50], int num_sensores, char *id_sensor) {
     for (int i = 0; i < num_sensores; i++) {
         if (strcmp(sensores[i], id_sensor) == 0) {
@@ -40,12 +40,12 @@ int sensor_existe(char sensores[][50], int num_sensores, char *id_sensor) {
     return 0;
 }
 
-// Funcao para processar um sensor especifico
+// Processo de um sensor apenas
 void processar_sensor(Leitura *leituras, int num_leituras, char *sensor_escolhido) {
     Leitura leituras_sensor[MAX_LEITURAS];
     int n = 0;
 
-    // Separa as leituras do sensor escolhido
+    // Leituras do sensor
     for (int j = 0; j < num_leituras; j++) {
         if (strcmp(leituras[j].id_sensor, sensor_escolhido) == 0) {
             leituras_sensor[n] = leituras[j];
@@ -85,7 +85,7 @@ int main() {
     char sensores[MAX_SENSORES][50];
     int num_sensores = 0;
 
-    entrada = fopen("entrada.txt", "r");
+    entrada = fopen("dados.txt", "r");
     if (entrada == NULL) {
         printf("Erro ao abrir o arquivo de entrada.\n");
         return 1;
@@ -107,7 +107,7 @@ int main() {
         printf("1 - Processar TODOS os sensores\n");
         printf("2 - Processar UM sensor especifico\n");
         printf("3 - Sair\n");
-        printf("Escolha uma opcao: ");
+        printf("\nEscolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
@@ -119,18 +119,18 @@ int main() {
 
             case 2: {
                 char sensor_desejado[50];
-                printf("Digite o ID do sensor desejado: ");
+                printf("\nDigite o ID do sensor desejado: ");
                 scanf("%s", sensor_desejado);
                 processar_sensor(leituras, num_leituras, sensor_desejado);
                 break;
             }
 
             case 3:
-                printf("Encerrando o programa.\n");
+                printf("\nEncerrando o programa.\n");
                 break;
 
             default:
-                printf("Opcao invalida. Tente novamente.\n");
+                printf("\nOpcao invalida. Tente novamente.\n");
         }
 
     } while (opcao != 3);
