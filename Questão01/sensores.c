@@ -5,24 +5,31 @@
 #define MAX_LEITURAS 10000
 #define MAX_SENSORES 100
 
-typedef struct {
+// Leitura de dados do sensor
+typedef struct
+{
     long int timestamp;
-    char id_sensor[50];
+    char nome_sensor[50];
     float valor;
 } Leitura;
 
-//Ordenação por Timestamp
-void ordenar_por_timestamp(Leitura *leituras, int n) {
+// Ordenação por Timestamp
+void ordenar_por_timestamp(Leitura *leituras, int n)
+{
     int i, j, min_idx;
     Leitura temp;
-    for (i = 0; i < n-1; i++) {
+    for (i = 0; i < n - 1; i++)
+    {
         min_idx = i;
-        for (j = i+1; j < n; j++) {
-            if (leituras[j].timestamp < leituras[min_idx].timestamp) {
+        for (j = i + 1; j < n; j++)
+        {
+            if (leituras[j].timestamp < leituras[min_idx].timestamp)
+            {
                 min_idx = j;
             }
         }
-        if (min_idx != i) {
+        if (min_idx != i)
+        {
             temp = leituras[i];
             leituras[i] = leituras[min_idx];
             leituras[min_idx] = temp;
@@ -30,30 +37,36 @@ void ordenar_por_timestamp(Leitura *leituras, int n) {
     }
 }
 
-// Registro do sensor
-int sensor_existe(char sensores[][50], int num_sensores, char *id_sensor) {
-    for (int i = 0; i < num_sensores; i++) {
-        if (strcmp(sensores[i], id_sensor) == 0) {
+// Sensor Existe
+int sensor_existe(char sensores[][50], int num_sensores, char *id_sensor)
+{
+    for (int i = 0; i < num_sensores; i++)
+    {
+        if (strcmp(sensores[i], id_sensor) == 0)
+        {
             return 1;
         }
     }
     return 0;
 }
 
-// Processo de um sensor apenas
-void processar_sensor(Leitura *leituras, int num_leituras, char *sensor_escolhido) {
+// Leitura do sensor
+void processar_sensor(Leitura *leituras, int num_leituras, char *sensor_escolhido)
+{
     Leitura leituras_sensor[MAX_LEITURAS];
     int n = 0;
 
-    // Leituras do sensor
-    for (int j = 0; j < num_leituras; j++) {
-        if (strcmp(leituras[j].id_sensor, sensor_escolhido) == 0) {
+    for (int j = 0; j < num_leituras; j++)
+    {
+        if (strcmp(leituras[j].id_sensor, sensor_escolhido) == 0)
+        {
             leituras_sensor[n] = leituras[j];
             n++;
         }
     }
 
-    if (n == 0) {
+    if (n == 0)
+    {
         printf("Nenhuma leitura encontrada para o sensor %s.\n", sensor_escolhido);
         return;
     }
@@ -64,12 +77,14 @@ void processar_sensor(Leitura *leituras, int num_leituras, char *sensor_escolhid
     sprintf(nome_arquivo, "%s.txt", sensor_escolhido);
 
     FILE *saida = fopen(nome_arquivo, "w");
-    if (saida == NULL) {
+    if (saida == NULL)
+    {
         printf("Erro ao criar o arquivo %s\n", nome_arquivo);
         return;
     }
 
-    for (int j = 0; j < n; j++) {
+    for (int j = 0; j < n; j++)
+    {
         fprintf(saida, "%ld %s %.2f\n", leituras_sensor[j].timestamp, leituras_sensor[j].id_sensor, leituras_sensor[j].valor);
     }
     fclose(saida);
@@ -77,23 +92,27 @@ void processar_sensor(Leitura *leituras, int num_leituras, char *sensor_escolhid
     printf("Arquivo %s gerado com sucesso!\n", nome_arquivo);
 }
 
-int main() {
+int main()
+{
     FILE *entrada;
     Leitura leituras[MAX_LEITURAS];
-    int num_leituras = 0;
 
+    int num_leituras = 0;
     char sensores[MAX_SENSORES][50];
     int num_sensores = 0;
 
     entrada = fopen("dados.txt", "r");
-    if (entrada == NULL) {
+    if (entrada == NULL)
+    {
         printf("Erro ao abrir o arquivo de entrada.\n");
         return 1;
     }
 
     // Leitura do arquivo
-    while (fscanf(entrada, "%ld %s %f", &leituras[num_leituras].timestamp, leituras[num_leituras].id_sensor, &leituras[num_leituras].valor) == 3) {
-        if (!sensor_existe(sensores, num_sensores, leituras[num_leituras].id_sensor)) {
+    while (fscanf(entrada, "%ld %s %f", &leituras[num_leituras].timestamp, leituras[num_leituras].id_sensor, &leituras[num_leituras].valor) == 3)
+    {
+        if (!sensor_existe(sensores, num_sensores, leituras[num_leituras].id_sensor))
+        {
             strcpy(sensores[num_sensores], leituras[num_leituras].id_sensor);
             num_sensores++;
         }
@@ -102,7 +121,8 @@ int main() {
     fclose(entrada);
 
     int opcao;
-    do {
+    do
+    {
         printf("\n===== MENU =====\n");
         printf("1 - Processar TODOS os sensores\n");
         printf("2 - Processar UM sensor especifico\n");
@@ -110,27 +130,30 @@ int main() {
         printf("\nEscolha uma opcao: ");
         scanf("%d", &opcao);
 
-        switch (opcao) {
-            case 1:
-                for (int i = 0; i < num_sensores; i++) {
-                    processar_sensor(leituras, num_leituras, sensores[i]);
-                }
-                break;
-
-            case 2: {
-                char sensor_desejado[50];
-                printf("\nDigite o ID do sensor desejado: ");
-                scanf("%s", sensor_desejado);
-                processar_sensor(leituras, num_leituras, sensor_desejado);
-                break;
+        switch (opcao)
+        {
+        case 1:
+            for (int i = 0; i < num_sensores; i++)
+            {
+                processar_sensor(leituras, num_leituras, sensores[i]);
             }
+            break;
 
-            case 3:
-                printf("\nEncerrando o programa.\n");
-                break;
+        case 2:
+        {
+            char sensor_desejado[50];
+            printf("\nDigite o ID do sensor desejado: ");
+            scanf("%s", sensor_desejado);
+            processar_sensor(leituras, num_leituras, sensor_desejado);
+            break;
+        }
 
-            default:
-                printf("\nOpcao invalida. Tente novamente.\n");
+        case 3:
+            printf("\nEncerrando o programa.\n");
+            break;
+
+        default:
+            printf("\nOpcao invalida. Tente novamente.\n");
         }
 
     } while (opcao != 3);
