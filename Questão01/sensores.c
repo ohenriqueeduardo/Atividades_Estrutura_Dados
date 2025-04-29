@@ -9,7 +9,7 @@
 typedef struct
 {
     long int timestamp;
-    char nome_sensor[50];
+    char id_sensor[50];
     float valor;
 } Leitura;
 

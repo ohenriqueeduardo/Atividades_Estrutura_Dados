@@ -5,47 +5,61 @@
 
 #define MAX_LINHAS 10000
 
-typedef struct {
+typedef struct
+{
     time_t timestamp;
     float valor;
 } Leitura;
 
-// Funcao para comparar duas leituras por timestamp (para qsort)
-int comparar(const void *a, const void *b) {
+// Compara duas leituras
+int comparar(const void *a, const void *b)
+{
     Leitura *l1 = (Leitura *)a;
     Leitura *l2 = (Leitura *)b;
-    if (l1->timestamp < l2->timestamp) return -1;
-    else if (l1->timestamp > l2->timestamp) return 1;
-    else return 0;
+    if (l1->timestamp < l2->timestamp)
+        return -1;
+    else if (l1->timestamp > l2->timestamp)
+        return 1;
+    else
+        return 0;
 }
 
-// Funcao para buscar leitura mais proxima (busca binaria)
-int busca_binaria(Leitura leituras[], int n, time_t alvo) {
+// Leitura binária
+int busca_binaria(Leitura leituras[], int n, time_t alvo)
+{
     int inicio = 0, fim = n - 1;
     int melhor_indice = -1;
     long menor_diferenca = -1;
 
-    while (inicio <= fim) {
+    while (inicio <= fim)
+    {
         int meio = (inicio + fim) / 2;
         long diferenca = labs(difftime(leituras[meio].timestamp, alvo));
 
-        if (menor_diferenca == -1 || diferenca < menor_diferenca) {
+        if (menor_diferenca == -1 || diferenca < menor_diferenca)
+        {
             menor_diferenca = diferenca;
             melhor_indice = meio;
         }
 
-        if (leituras[meio].timestamp < alvo) {
+        if (leituras[meio].timestamp < alvo)
+        {
             inicio = meio + 1;
-        } else if (leituras[meio].timestamp > alvo) {
+        }
+        else if (leituras[meio].timestamp > alvo)
+        {
             fim = meio - 1;
-        } else {
-            return meio; // Encontrado exatamente
+        }
+        else
+        {
+            return meio; // Preciso
         }
     }
     return melhor_indice;
 }
 
-int main() {
+int main()
+{
     char sensor[10];
     char datahora[20];
 
@@ -53,11 +67,11 @@ int main() {
     scanf("%s", sensor);
 
     printf("Informe a data e hora (AAAA-MM-DD HH:MM:SS): ");
-    getchar(); // limpar o buffer
+    getchar();
     fgets(datahora, sizeof(datahora), stdin);
-    datahora[strcspn(datahora, "\n")] = 0; // remover o \n
+    datahora[strcspn(datahora, "\n")] = 0;
 
-    // Converter data e hora para timestamp (time_t)
+    // Data e hora em timestamp
     struct tm t;
     memset(&t, 0, sizeof(struct tm));
     sscanf(datahora, "%d-%d-%d %d:%d:%d",
@@ -67,9 +81,10 @@ int main() {
     t.tm_mon -= 1;
     time_t momento = mktime(&t);
 
-    // Ler o arquivo completo
+    // Arquivo completo
     FILE *fp = fopen("dados.txt", "r");
-    if (!fp) {
+    if (!fp)
+    {
         printf("Erro ao abrir o arquivo dados.txt.\n");
         return 1;
     }
@@ -78,14 +93,18 @@ int main() {
     int total = 0;
 
     char linha[100];
-    while (fgets(linha, sizeof(linha), fp)) {
+    while (fgets(linha, sizeof(linha), fp))
+    {
         time_t ts;
         char sensor_lido[10];
         float valor;
 
-        if (sscanf(linha, "%ld %s %f", &ts, sensor_lido, &valor) == 3) {
-            if (strcmp(sensor_lido, sensor) == 0) {
-                if (total < MAX_LINHAS) {
+        if (sscanf(linha, "%ld %s %f", &ts, sensor_lido, &valor) == 3)
+        {
+            if (strcmp(sensor_lido, sensor) == 0)
+            {
+                if (total < MAX_LINHAS)
+                {
                     leituras[total].timestamp = ts;
                     leituras[total].valor = valor;
                     total++;
@@ -95,17 +114,19 @@ int main() {
     }
     fclose(fp);
 
-    if (total == 0) {
+    if (total == 0)
+    {
         printf("Nenhuma leitura encontrada para o sensor %s.\n", sensor);
         return 1;
     }
 
-    // Ordenar as leituras por timestamp
+    // Leituras por timestamp
     qsort(leituras, total, sizeof(Leitura), comparar);
 
-    // Buscar a leitura mais proxima
+    // Leitura mais próxima
     int indice = busca_binaria(leituras, total, momento);
-    if (indice >= 0) {
+    if (indice >= 0)
+    {
         struct tm *tm_info = localtime(&leituras[indice].timestamp);
         char buffer[20];
         strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", tm_info);
@@ -113,7 +134,9 @@ int main() {
         printf("\nLeitura mais proxima:\n");
         printf("Timestamp: %s\n", buffer);
         printf("Valor: %.2f\n", leituras[indice].valor);
-    } else {
+    }
+    else
+    {
         printf("\nNenhuma leitura encontrada.\n");
     }
 
