@@ -1,0 +1,16 @@
+1630454400 sensor_temp 25.5
+1630454405 sensor_umid 45
+1630454410 sensor_status true
+1630454415 sensor_codigo ABC123
+1630454420 sensor_temp 26.0
+1630454425 sensor_umid 46
+1630454430 sensor_status false
+1630454435 sensor_codigo XYZ789
+1630454440 sensor_temp 26.5
+1630454445 sensor_umid 47
+1630454450 sensor_status true
+1630454455 sensor_codigo DEF456
+1630454403 sensor_temp 25.8
+1630454408 sensor_umid 44
+1630454413 sensor_status false
+1630454418 sensor_codigo GHI789
