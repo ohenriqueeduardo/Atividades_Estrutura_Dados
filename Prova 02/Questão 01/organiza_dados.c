@@ -9,7 +9,7 @@
 #define MAX_ID_LENGTH 50
 #define MAX_STRING_VALUE 16
 
-// Enum para os tipos de dados suportados
+
 typedef enum {
     INT,
     FLOAT,
@@ -18,13 +18,13 @@ typedef enum {
     UNKNOWN
 } TipoDado;
 
-// Estrutura para armazenar informações sobre um sensor
+
 typedef struct {
     char id[MAX_ID_LENGTH];
     TipoDado tipo;
 } SensorInfo;
 
-// Leitura de dados do sensor com union para diferentes tipos
+
 typedef struct {
     long timestamp;
     char id_sensor[MAX_ID_LENGTH];
@@ -37,27 +37,25 @@ typedef struct {
     } valor;
 } Leitura;
 
-// Função para determinar o tipo de dado de uma string
+
 TipoDado determinar_tipo(const char *valor) {
-    // Verifica se é booleano
     if (strcmp(valor, "true") == 0 || strcmp(valor, "false") == 0) {
         return BOOL;
     }
     
-    // Verifica se é inteiro
     char *endptr;
     long int_val = strtol(valor, &endptr, 10);
     if (*endptr == '\0') {
         return INT;
     }
     
-    // Verifica se é float
+    
     float float_val = strtof(valor, &endptr);
     if (*endptr == '\0') {
         return FLOAT;
     }
     
-    // Verifica se é string (até 16 caracteres)
+    
     if (strlen(valor) <= MAX_STRING_VALUE) {
         return STRING;
     }
@@ -154,26 +152,21 @@ int main(int argc, char *argv[]) {
         char *token;
         char *resto = linha;
         
-        // Extrair timestamp
         token = strtok_r(resto, " ", &resto);
         if (token == NULL) continue;
         leituras[total_leituras].timestamp = atol(token);
         
-        // Extrair ID do sensor
         token = strtok_r(resto, " ", &resto);
         if (token == NULL) continue;
         strncpy(leituras[total_leituras].id_sensor, token, MAX_ID_LENGTH);
         leituras[total_leituras].id_sensor[MAX_ID_LENGTH - 1] = '\0';
         
-        // Extrair valor (pode conter espaços se for string)
         token = strtok_r(resto, "\n", &resto);
         if (token == NULL) continue;
         
-        // Determinar tipo de dado
         leituras[total_leituras].tipo = determinar_tipo(token);
         processar_valor(&leituras[total_leituras], token);
         
-        // Verificar se o sensor já foi registrado
         int sensor_index = -1;
         for (int i = 0; i < total_sensores; i++) {
             if (strcmp(sensores[i].id, leituras[total_leituras].id_sensor) == 0) {
@@ -193,26 +186,21 @@ int main(int argc, char *argv[]) {
     
     fclose(file);
     
-    // Para cada sensor, filtrar suas leituras, ordenar e salvar em arquivo
     for (int i = 0; i < total_sensores; i++) {
         Leitura leituras_sensor[MAX_LEITURAS];
         int count = 0;
         
-        // Filtrar leituras para este sensor
         for (int j = 0; j < total_leituras; j++) {
             if (strcmp(leituras[j].id_sensor, sensores[i].id) == 0) {
                 leituras_sensor[count++] = leituras[j];
             }
         }
         
-        // Ordenar leituras por timestamp
         ordenar_por_timestamp(leituras_sensor, count);
         
-        // Criar nome do arquivo de saída
         char nome_arquivo[100];
         snprintf(nome_arquivo, sizeof(nome_arquivo), "%s.txt", sensores[i].id);
         
-        // Escrever leituras no arquivo
         escrever_leituras_arquivo(nome_arquivo, leituras_sensor, count);
     }
     
