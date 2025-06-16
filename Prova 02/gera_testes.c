@@ -28,10 +28,10 @@ void limpa_buf() {
 }
 
 TipoDado str_para_tipo(const char *s) {
-    if (strcmp(s, "int") == 0) return TIPO_INT;
-    if (strcmp(s, "float") == 0) return TIPO_FLOAT;
-    if (strcmp(s, "bool") == 0) return TIPO_BOOL;
-    if (strcmp(s, "string") == 0) return TIPO_STRING;
+    if (strcmp(s, "CONJ_Z") == 0) return TIPO_INT;
+    if (strcmp(s, "CONJ_Q") == 0) return TIPO_FLOAT;
+    if (strcmp(s, "BINARIO") == 0) return TIPO_BOOL;
+    if (strcmp(s, "TEXTO") == 0) return TIPO_STRING;
     return -1;
 }
 
@@ -93,6 +93,7 @@ void gera_arq_teste() {
     }
 
     printf("\nAdicione sensores (maximo %d). Digite 'fim' para parar.\n", MAX_SENSORS);
+    printf("Tipos de dados aceitos: CONJ_Z (inteiro), CONJ_Q (float), BINARIO (booleano), TEXTO (string).\n");
     while (num_sensors < MAX_SENSORS) {
         char s_nome[50];
         char s_tipo_str[20];
@@ -114,7 +115,7 @@ void gera_arq_teste() {
             continue;
         }
 
-        printf("Tipo do dado para '%s' (int, float, bool, string): ", s_nome);
+        printf("Tipo do dado para '%s' (CONJ_Z, CONJ_Q, BINARIO, TEXTO): ", s_nome);
         if (fgets(buf, sizeof(buf), stdin) == NULL) {
             printf("Erro de leitura. Abortando.\n");
             return;
@@ -125,7 +126,7 @@ void gera_arq_teste() {
 
         s_tipo = str_para_tipo(s_tipo_str);
         if (s_tipo == -1) {
-            printf("Tipo de dado '%s' invalido. Tente novamente.\n", s_tipo_str);
+            printf("Tipo de dado '%s' invalido. Por favor, use CONJ_Z, CONJ_Q, BINARIO ou TEXTO. Tente novamente.\n", s_tipo_str);
             continue;
         }
 

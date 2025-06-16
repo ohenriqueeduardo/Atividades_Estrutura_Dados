@@ -56,11 +56,12 @@ void proc_val(Rd *r, const char *v_str) {
     }
 }
 
+// Função de comparação para ordenação decrescente
 int cmp_rds(const void *a, const void *b) {
     const Rd *r_a = (const Rd *)a;
     const Rd *r_b = (const Rd *)b;
-    if (r_a->ts < r_b->ts) return -1;
-    if (r_a->ts > r_b->ts) return 1;
+    if (r_a->ts < r_b->ts) return 1;
+    if (r_a->ts > r_b->ts) return -1;
     return 0;
 }
 

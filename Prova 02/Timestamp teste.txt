@@ -1,0 +1,25 @@
+ Timestamps de Inicio e Fim para teste do Programa 3 (gera_dados.c)
+
+# Intervalo Curto (Algumas Horas)
+# Inicio: Sexta-feira, 15 de marco de 2023, 00:00:00 GMT-3
+# Fim: Sexta-feira, 15 de marco de 2023, 02:00:00 GMT-3
+1678886400
+1678893600
+
+# Intervalo de Um Dia Inteiro
+# Inicio: Segunda-feira, 1 de janeiro de 2024, 00:00:00 GMT-3
+# Fim: Terca-feira, 2 de janeiro de 2024, 00:00:00 GMT-3
+1704067200
+1704153600
+
+# Intervalo de Uma Semana
+# Inicio: Terca-feira, 11 de junho de 2024, 00:00:00 GMT-3
+# Fim: Terca-feira, 18 de junho de 2024, 00:00:00 GMT-3
+1718064000
+1718668800
+
+# Intervalo Abrangendo o Presente (ou Futuro Proximo) - A partir de 13 de junho de 2025
+# Inicio: Sabado, 10 de junho de 2025, 00:00:00 GMT-3
+# Fim: Sabado, 17 de junho de 2025, 00:00:00 GMT-3
+1749870000
+1750561200
