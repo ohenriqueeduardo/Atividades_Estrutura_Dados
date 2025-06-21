@@ -1,0 +1,9 @@
+Resultado final da partida:
+Total de jogos completos: 6
+Rodadas vencidas por jogador:
+- Henri: 13
+- Jonh A: 10
+
+Mais vezes com 21 pontos: Henri (2x)
+Mais estouros: Jonh A (14x)
+Jogador que mais perdeu: Jonh A (2 jogos vencidos)
