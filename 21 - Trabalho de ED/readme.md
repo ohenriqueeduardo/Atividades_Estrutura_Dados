@@ -11,6 +11,11 @@ Além disso, criamos os protótipos de todas as funções que seriam implementad
 
 Agora vamos falar um pouco das funções que usamos no decorre do código 
 
+# void gerar_catas();
+
+Essa função gera as 52 cartas do baralho, incluindo seu naipe, valor númerico e valor string como o A, o J, Q, K.
+E atribui na sua struct Baralho.
+
 # void limpar_buffer()
 
 essa fução faz exatamente o que o nome sugere, limpa o buffer, evitando assim a leitura do "\n" da entrada do teclado.
@@ -32,13 +37,11 @@ Essa função garante que todos os jogadores estejam corretamente configurados e
 
 # int comprar_carta_probabilidade_alta()
 
-Esta função é usada para gerar o valor de uma nova carta, com uma chance aumentada de sair uma carta alta (valores próximos de 10).
+Esta função é usada para gerar o valor de uma nova carta.
 
-Inicialmente, ela gera um número aleatório de 1 a 10.
+Ela gera um número aleatório de 1 a 51.
 
-Depois, com uma probabilidade de 60% (quando rand() % 10 < 6), o valor da carta é substituído por um número entre 8 e 10.
-
-O objetivo dessa função é simular um cenário onde o jogador tenha mais chances de tirar cartas altas, aumentando a tensão e o desafio na decisão de "comprar" ou não mais uma carta. Essa lógica influencia diretamente a estratégia de jogo dos participantes.
+O objetivo dessa função é retirar um número aleatorio que será usado para acessar uma carta aleatória do baralho.
 
 # void realizar_turno()
 
@@ -61,6 +64,10 @@ Caso o jogador escolha não comprar mais cartas, seu turno termina e o status é
 
 Essa função garante que todos os jogadores realizem seus turnos de forma justa, até que decidam parar ou ultrapassem o limite de pontos.
 
+# void distribuir_primeira_carta()
+
+Dentro de um laço de repetição for tendo parametro a quantidade de jogadores para quantidade de repetições do laço,
+ela atribui a primeira carta de cada jogador, usando a função `comprar_carta_probabilidade_alta()` para pegar uma carta aleatória do baralho.
 
 # int verificar_vencedor_rodada() 
 
@@ -112,16 +119,18 @@ Dessa forma, a função garante que todos os dados específicos da partida anter
  Esta função é responsável por gerar um arquivo de texto (log_partida.txt) contendo um resumo completo dos resultados da partida.
 No relatório, são registrados os desempenhos individuais dos jogadores ao longo do jogo, incluindo:
 
-Total de rodadas vencidas por cada jogador; Quem obteve mais vezes a pontuação exata de 21; Quem teve mais estouros; Quem teve menos vitórias (indicando o jogador que mais perdeu).
+Total de rodadas vencidas por cada jogador;
+Quem obteve mais vezes a pontuação exata de 21;
+Quem teve mais estouros;
 
 Com essas informações, o arquivo evidencia o desempenho de cada participante e permite identificar, de forma clara, quem se destacou como vencedor da partida.
 
-
 # Main()
 
- Esta função inicializa o jogo, executa a lógica principal das partidas e controla o fluxo entre rodadas, jogos e a decisão de encerrar ou continuar jogando.
+Esta função inicializa o jogo, executa a lógica principal das partidas e controla o fluxo entre rodadas, jogos e a decisão de encerrar ou continuar jogando.
 Funcionalidades principais:
 Inicializa o gerador de números aleatórios com `srand(time(NULL))`.
+Gera as cartas do baralho usando `gerar_cartas()`.
 Solicita os nomes dos jogadores via `inserir_nomes_jogadores()`.
 Controla um laço principal que permite a realização de até MAX_JOGOS partidas.
 Para cada partida:
