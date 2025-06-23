@@ -1,0 +1,8 @@
+Resultado final da partida:
+Total de jogos completos: 1
+Rodadas vencidas por jogador:
+- Luiz: 3
+- Ruite: 1
+
+Mais vezes com 21 pontos: Luiz (1x)
+Mais estouros: Luiz (2x)

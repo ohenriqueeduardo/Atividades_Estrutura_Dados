@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h> // <----
 
 /* ========== CONSTANTES E DEFINIÇÕES ========== */
 #define MAX_JOGADORES 6
@@ -22,6 +23,18 @@ typedef struct {
     int status;
 } Jogador;
 
+/*=========== BARALHO ==================== */
+
+typedef struct {
+    const char* nipe;
+    int valor;
+    const char* valorletra;
+} Carta;
+
+typedef struct {
+    Carta cartas[52];
+} Baralho;
+
 /* ========== VARIÁVEIS GLOBAIS ========== */
 Jogador jogadores[MAX_JOGADORES];
 int num_jogadores = 0;
@@ -29,6 +42,7 @@ int rodada_atual = 1;
 int jogo_atual = 1;
 
 /* ========== PROTÓTIPOS DE FUNÇÕES ========== */
+void gerar_catas();
 void limpar_buffer();
 void inserir_nomes_jogadores();
 int comprar_carta_probabilidade_alta();
@@ -41,6 +55,23 @@ void resetar_jogo();
 void gerar_log_partida();
 
 /* ========== IMPLEMENTAÇÃO DAS FUNÇÕES ========== */
+
+void gerar_cartas(Baralho* baralho) { // <------------
+
+    const char* nipes[] = {"Copas", "Espadas", "Ouros", "Paus"};
+    const char* valores[] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+    int i = 0;
+
+    for (int j = 0; j < 4; j++) { // naipes
+        for (int k = 0; k < 13; k++) { // valores
+            baralho->cartas[i].nipe = nipes[j];
+            baralho->cartas[i].valor = k + 1;
+            baralho->cartas[i].valorletra = valores[k];
+            i++;
+        }
+    }
+}
+
 void limpar_buffer() {
     while (getchar() != '\n');
 }
@@ -71,46 +102,56 @@ void inserir_nomes_jogadores() {
 }
 
 int comprar_carta_probabilidade_alta() {
-    int prob = rand() % 10 + 1;
-    
-    if (rand() % 10 < 6) {
-        prob = 8 + rand() % 3;
-    }
-    
+    int prob = rand() % 51 + 1;
     return prob;
 }
 
-void distribuir_primeira_carta() {
+void distribuir_primeira_carta(Baralho* baralho) { //<----------
     for (int i = 0; i < num_jogadores; i++) {
-        jogadores[i].pontos = comprar_carta_probabilidade_alta();
+         baralho->cartas[i] = baralho->cartas[comprar_carta_probabilidade_alta()];
+         jogadores[i].pontos = baralho->cartas[i].valor;
         jogadores[i].status = 1;
     }
 }
 
-void realizar_turno() {
+void realizar_turno(Baralho* baralho) { //<------------
+
     for (int i = 0; i < num_jogadores; i++) {
-        while (jogadores[i].status == 1 && jogadores[i].pontos < PONTOS_VITORIA) {
-            printf("\n%s: %d pontos. Comprar mais? (s/n): ", jogadores[i].nome, jogadores[i].pontos);
+        int aux = comprar_carta_probabilidade_alta();
+
+        printf("\n%s: %s de %s\n", jogadores[i].nome, baralho->cartas[i].valorletra, baralho->cartas[i].nipe);
+
+        while (jogadores[i].status == 1 && baralho->cartas->valor < PONTOS_VITORIA) {
+
+            printf("%s: Total: %d, Comprar mais? (s/n): ", jogadores[i].nome, jogadores[i].pontos);
             char resposta;
             scanf(" %c", &resposta);
             limpar_buffer();
-            
-            if (resposta == 's' || resposta == 'S') {
-                int carta = comprar_carta_probabilidade_alta();
-                jogadores[i].pontos += carta;
-                printf("+%d pontos. Total: %d\n", carta, jogadores[i].pontos);
+
+            if(tolower(resposta) == 'n'){
+                jogadores[i].status = 0;
+            } else if (tolower(resposta) == 's') {
+
+                aux = comprar_carta_probabilidade_alta();
+                baralho->cartas[aux];
+                jogadores[i].pontos += baralho->cartas[aux].valor;
+                printf("+ %s de %s. Total: %d\n\n", baralho->cartas[aux].valorletra, baralho->cartas[aux].nipe, jogadores[i].pontos);
                 
                 if (jogadores[i].pontos > PONTOS_VITORIA) {
-                    printf("Estourou!\n");
+                    printf("Estourou!\n\n");
                     jogadores[i].estouros++;
                     jogadores[i].status = 0;
                 } else if (jogadores[i].pontos == PONTOS_VITORIA) {
-                    printf("21 pontos!\n");
+                    printf("21 pontos!\n\n");
                     jogadores[i].vezes_21++;
                     jogadores[i].status = 0;
                 }
-            } else {
-                jogadores[i].status = 0;
+            }else{
+                printf("\n//======================================================\\\\\n");
+                printf("||\n");
+                printf("||\tResposta invalida, digite apenas 's' ou 'n'!\n");
+                printf("||\n");
+                printf("\\\\======================================================//\n");
             }
         }
     }
@@ -156,7 +197,7 @@ void mostrar_placar() {
     printf("\n=== Placar (Rodada %d, Jogo %d) ===\n", rodada_atual, jogo_atual);
     
     for (int i = 0; i < num_jogadores; i++) {
-        printf("%s: %d pts | Rodadas (jogo): %d | Rodadas (total): %d | Jogos: %d\n",
+        printf("%-10s: %3d pts | Rodada atual: %d | Rodadas totais: %d | Jogos ganhos: %d\n",
                jogadores[i].nome, jogadores[i].pontos,
                jogadores[i].vitorias_rodada_jogo,
                jogadores[i].vitorias_rodada_total,
@@ -189,8 +230,8 @@ void gerar_log_partida() {
     fprintf(log, "Total de jogos completos: %d\n", jogo_atual-1);
     fprintf(log, "Rodadas vencidas por jogador:\n");
     
-    int mais_21 = 0, mais_estouros = 0, menos_vitorias = 0;
-    int idx_mais_21 = 0, idx_mais_estouros = 0, idx_menos_vitorias = 0;
+    int mais_21 = 0, mais_estouros = 0;
+    int idx_mais_21 = 0, idx_mais_estouros = 0;
     
     for (int i = 0; i < num_jogadores; i++) {
         fprintf(log, "- %s: %d\n", jogadores[i].nome, jogadores[i].vitorias_rodada_total);
@@ -204,16 +245,10 @@ void gerar_log_partida() {
             mais_estouros = jogadores[i].estouros;
             idx_mais_estouros = i;
         }
-        
-        if (jogadores[i].vitorias_jogo < jogadores[menos_vitorias].vitorias_jogo) {
-            menos_vitorias = i;
-        }
     }
     
     fprintf(log, "\nMais vezes com 21 pontos: %s (%dx)\n", jogadores[idx_mais_21].nome, mais_21);
     fprintf(log, "Mais estouros: %s (%dx)\n", jogadores[idx_mais_estouros].nome, mais_estouros);
-    fprintf(log, "Jogador que mais perdeu: %s (%d jogos vencidos)\n", 
-            jogadores[menos_vitorias].nome, jogadores[menos_vitorias].vitorias_jogo);
     
     fclose(log);
 }
@@ -221,8 +256,12 @@ void gerar_log_partida() {
 /* ========== FUNÇÃO PRINCIPAL ========== */
 int main() {
     srand(time(NULL));
+
+    Baralho baralho;
+    gerar_cartas(&baralho);
+
     
-    printf("=== Jogo de 21 ===\n");
+    printf("=== Jogo 21 ===\n");
     inserir_nomes_jogadores();
     
     int partida_encerrada = 0;
@@ -233,11 +272,11 @@ int main() {
         
         while (!jogo_encerrado && !partida_encerrada) {
             printf("\n=== Rodada %d ===\n", rodada_atual);
-            distribuir_primeira_carta();
+            distribuir_primeira_carta(&baralho);
             
             int rodada_encerrada = 0;
             while (!rodada_encerrada) {
-                realizar_turno();
+                realizar_turno(&baralho);
                 
                 int ativos = 0;
                 for (int i = 0; i < num_jogadores; i++) {
