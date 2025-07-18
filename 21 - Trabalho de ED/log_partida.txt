@@ -1,9 +1,8 @@
 Resultado final da partida:
-Total de jogos completos: 6
+Total de jogos completos: 1
 Rodadas vencidas por jogador:
-- Henri: 13
-- Jonh A: 10
+- joao: 1
+- emerson: 3
 
-Mais vezes com 21 pontos: Henri (2x)
-Mais estouros: Jonh A (14x)
-Jogador que mais perdeu: Jonh A (2 jogos vencidos)
+Mais vezes com 21 pontos: joao (0x)
+Mais estouros: joao (3x)
